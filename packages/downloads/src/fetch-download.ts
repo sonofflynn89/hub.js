@@ -11,17 +11,17 @@ interface IDownloadRequestParameters {
 }
 
 interface IDownloadMetadata {
-  downloadId: string;
-  lastEditDate:string;
-  contentLastModified: string;
-  lastModified: string;
-  status: string;
-  downloadUrl: string;
-  contentLength: number;
-  exportDuration: number;
+  downloadId: string,
+  lastEditDate:string,
+  contentLastModified: string,
+  lastModified: string,
+  status: string,
+  downloadUrl: string,
+  contentLength: number,
+  exportDuration: number
 }
 
-export async function fetchDownload(
+export function fetchDownload(
   params: IDownloadRequestParameters
 ): Promise<IDownloadMetadata> {
   const {
@@ -41,26 +41,31 @@ export async function fetchDownload(
     geometry,
     where
   };
-  const url = requestBuilder({ host, route: `/api/v3/${datasetId}/downloads`, params: queryParams });
-  const resp = await fetch(url);
-  
-  const { ok, status, statusText } = resp;
-  if (!ok) {
-    throw new RemoteServerError(statusText, url, status);
-  }
-
-  const json = await resp.json();
-
-  validateApiResponse(json);
-
-  return formatApiResponse(json);
+  const url = requestBuilder({ host, route: `/api/v3/${datasetId}/downloads`, params: queryParams })
+  return new Promise((resolve, reject) => {
+    fetch(url).then(resp => {
+      const { ok, status, statusText } = resp;
+      if (!ok) {
+        throw new RemoteServerError(statusText, url, status);
+      }
+      return resp.json();
+      })
+      .then(json => {
+        validateApiResponse(json);
+        const metadata = formatApiResponse(json);
+        resolve(metadata);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
 }
 
 function requestBuilder ({ host, route, params }: any): string {
-  const baseUrl = host.endsWith('/') ? host : `${host}/`;
-  const url = new URL(route, baseUrl);
-  url.search = buildQueryString(params);
-  return url.toString();
+  const baseUrl = host.endsWith('/') ? host : `${host}/`
+  const url = new URL(route, baseUrl)
+  url.search = buildQueryString(params)
+  return url.toString()
 }
 
 function buildQueryString (params: any): string {
@@ -69,8 +74,8 @@ function buildQueryString (params: any): string {
   }).reduce((acc:any, key:string) => {
     acc[key] = params[key];
     return acc;
-  }, {});
-  return (new URLSearchParams(queryParams)).toString();
+  }, {})
+  return (new URLSearchParams(queryParams)).toString()
 }
 
 function validateApiResponse ({ data }: any): void {
@@ -83,7 +88,7 @@ function validateApiResponse ({ data }: any): void {
   }
 
   if (data.length > 1) {
-    throw new Error('Unexpected API response; "data" contains more than one download.');
+    throw new Error('Unexpected API response; "data" contains more than one download.')
   }
 }
 
@@ -118,5 +123,5 @@ function formatApiResponse(json: any): IDownloadMetadata {
     downloadUrl,
     contentLength,
     exportDuration
-  };
-}
+   };
+};

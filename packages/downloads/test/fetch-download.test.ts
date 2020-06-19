@@ -22,7 +22,7 @@ describe("fetchDownload", () => {
       const { message, status, url } = err;
       expect(message).toEqual('Bad Gateway');
       expect(status).toEqual(502);
-      expect(url).toEqual('Bad Gateway');
+      expect(url).toEqual('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv');
     } finally {
       done();
     }
