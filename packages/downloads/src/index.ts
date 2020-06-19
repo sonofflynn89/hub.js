@@ -2,5 +2,3 @@
  * Apache-2.0 */
 
 export * from "./fetch-download";
-export * from "./download-metadata";
-export * from "./download-request-parameters";
