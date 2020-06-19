@@ -56,7 +56,7 @@ export function fetchDownload(
         resolve(metadata);
       })
       .catch(error => {
-        reject(error);
+        return reject(error);
       });
   });
 }
