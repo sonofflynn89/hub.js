@@ -1,3 +1,5 @@
+import { RemoteServerError } from './remote-server-error';
+
 interface IDownloadRequestParameters {
   host: string;
   datasetId: string;
@@ -9,14 +11,14 @@ interface IDownloadRequestParameters {
 }
 
 interface IDownloadMetadata {
-  downloadId: string,
-  lastEditDate:string,
-  contentLastModified: string,
-  lastModified: string,
-  status: string,
-  downloadUrl: string,
-  contentLength: number,
-  exportDuration: number
+  downloadId: string;
+  lastEditDate:string;
+  contentLastModified: string;
+  lastModified: string;
+  status: string;
+  downloadUrl: string;
+  contentLength: number;
+  exportDuration: number;
 }
 
 export async function fetchDownload(
@@ -39,12 +41,12 @@ export async function fetchDownload(
     geometry,
     where
   };
-  const url = requestBuilder({ host, route: `/api/v3/${datasetId}/downloads`, params: queryParams })
+  const url = requestBuilder({ host, route: `/api/v3/${datasetId}/downloads`, params: queryParams });
   const resp = await fetch(url);
   
   const { ok, status, statusText } = resp;
   if (!ok) {
-    throw new RemoteServerError(statusText, url, status)
+    throw new RemoteServerError(statusText, url, status);
   }
 
   const json = await resp.json();
@@ -55,10 +57,10 @@ export async function fetchDownload(
 }
 
 function requestBuilder ({ host, route, params }: any): string {
-  const baseUrl = host.endsWith('/') ? host : `${host}/`
-  const url = new URL(route, baseUrl)
-  url.search = buildQueryString(params)
-  return url.toString()
+  const baseUrl = host.endsWith('/') ? host : `${host}/`;
+  const url = new URL(route, baseUrl);
+  url.search = buildQueryString(params);
+  return url.toString();
 }
 
 function buildQueryString (params: any): string {
@@ -67,8 +69,8 @@ function buildQueryString (params: any): string {
   }).reduce((acc:any, key:string) => {
     acc[key] = params[key];
     return acc;
-  }, {})
-  return (new URLSearchParams(queryParams)).toString()
+  }, {});
+  return (new URLSearchParams(queryParams)).toString();
 }
 
 function validateApiResponse ({ data }: any): void {
@@ -81,14 +83,14 @@ function validateApiResponse ({ data }: any): void {
   }
 
   if (data.length > 1) {
-    throw new Error('Unexpected API response; "data" contains more than one download.')
+    throw new Error('Unexpected API response; "data" contains more than one download.');
   }
 }
 
 function formatApiResponse(json: any): IDownloadMetadata {
   const { data: [ metadata ] } = json;
 
-  if (!metadata) return;
+  if (!metadata) return undefined;
 
   const {
       attributes: {
@@ -116,19 +118,5 @@ function formatApiResponse(json: any): IDownloadMetadata {
     downloadUrl,
     contentLength,
     exportDuration
-   };
-};
-
-class RemoteServerError extends Error {
-  status: number;
-  url: string;
-  
-  // Istanbul erroneously treats extended class constructors as an uncovered branch: https://github.com/gotwarlost/istanbul/issues/690
-  /* istanbul ignore next */
-  constructor (message: string, url: string, status: number) {
-    super(message)
-    this.status = status
-    this.url = url
-    Error.captureStackTrace(this, RemoteServerError)
-  }
+  };
 }

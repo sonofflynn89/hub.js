@@ -21,10 +21,12 @@ describe("fetchDownload", () => {
     } catch (err) {
       const { message, status, url } = err;
       expect(message).toEqual('Bad Gateway');
+      expect(status).toEqual(502);
+      expect(url).toEqual('Bad Gateway');
     } finally {
       done();
     }
-  })
+  });
 
   it('handle missing data property', async done => {
     try {
@@ -106,13 +108,11 @@ describe("fetchDownload", () => {
 
       expect(result).toEqual(undefined);
     } catch (err) {
-      console.log(err)
+      expect(err).toEqual(undefined);
     } finally {
       done();
     }
-    
-    
-  })
+  });
 
   it('handle downloaded result', async done => {
     try {
@@ -166,13 +166,11 @@ describe("fetchDownload", () => {
         exportDuration: 13121
       });
     } catch (err) {
-      console.log(err)
+      expect(err).toEqual(undefined);
     } finally {
       done();
     }
-    
-    
-  })
+  });
 
   it('handle downloaded result with host including trailing slash', async done => {
     try {
@@ -226,11 +224,9 @@ describe("fetchDownload", () => {
         exportDuration: 13121
       });
     } catch (err) {
-      console.log(err)
+      expect(err).toEqual(undefined);
     } finally {
       done();
     }
-    
-    
-  })
-})
+  });
+});
