@@ -1,14 +1,5 @@
+import { IDownloadFetchParameters } from "./download-fetch-parameters";
 import { RemoteServerError } from './remote-server-error';
-
-interface IDownloadFetchParameters {
-  host: string;
-  datasetId: string;
-  spatialRefId?: number;
-  spatialRefWkt?: string;
-  formats?: string;
-  geometry?: string;
-  where?: string;
-}
 
 interface IDownloadMetadata {
   downloadId: string,
@@ -18,7 +9,7 @@ interface IDownloadMetadata {
   status: string,
   downloadUrl: string,
   contentLength: number,
-  exportDuration: number
+  cacheTime: number
 }
 
 export function fetchDownload(
@@ -104,7 +95,7 @@ function formatApiResponse(json: any): IDownloadMetadata {
         lastModified,
         status,
         contentLength,
-        exportDuration,
+        cacheTime,
         source: {
           lastEditDate,
         }
@@ -122,6 +113,6 @@ function formatApiResponse(json: any): IDownloadMetadata {
     status,
     downloadUrl,
     contentLength,
-    exportDuration
+    cacheTime
    };
 };
