@@ -10,6 +10,26 @@ interface IExportRequestParameters {
   where?: string;
 }
 
+/**
+ * ```js
+ * import { requestDatasetExport } from "@esri/hub-downloads";
+ * 
+ * const params = {
+ *   host: 'https://hub.arcgis.com,
+ *   datasetId: 'abcdef0123456789abcdef0123456789_0',
+ *   format: 'csv'
+ * };
+ * 
+ * fetchDownload(params)
+ *   .then(response => {
+ *     // {
+ *     //   downloadId: 'abcdef0123456789abcdef0123456789_0::csv',
+ *     // }
+ *   });
+ * ```
+ * Request an export of a dataset to a particular file format.
+ * @param params - parameters defining a dataset export job
+ */
 export function requestDatasetExport (params: IExportRequestParameters) {
   const {
     host,

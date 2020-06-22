@@ -1,9 +1,9 @@
-export interface IDownloadFetchParameters {
+export interface IDownloadRequestParameters {
   host: string;
   datasetId: string;
+  format: string;
   spatialRefId?: number;
   spatialRefWkt?: string;
-  formats?: string;
-  geometry?: string;
+  geometry?: object;
   where?: string;
 }

@@ -23,7 +23,7 @@ describe("pollDownload", () => {
         datasetId: 'abcdef0123456789abcdef0123456789_0',
         downloadId: 'test-id',
         spatialRefId: 4326,
-        formats: 'csv'
+        format: 'csv'
       }, mockEventEmitter, 10);
       await delay(0);
       expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(1);
@@ -73,7 +73,7 @@ describe("pollDownload", () => {
         datasetId: 'abcdef0123456789abcdef0123456789_0',
         downloadId: 'test-id',
         spatialRefId: 4326,
-        formats: 'csv'
+        format: 'csv'
       }, mockEventEmitter, 10);
       await delay(0);
       expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(1);
@@ -136,7 +136,7 @@ describe("pollDownload", () => {
         datasetId: 'abcdef0123456789abcdef0123456789_0',
         downloadId: 'test-id',
         spatialRefId: 4326,
-        formats: 'csv'
+        format: 'csv'
       }, mockEventEmitter, 10);
       await delay(0);
       expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(1);
@@ -199,7 +199,7 @@ describe("pollDownload", () => {
         datasetId: 'abcdef0123456789abcdef0123456789_0',
         downloadId: 'test-id',
         spatialRefId: 4326,
-        formats: 'csv'
+        format: 'csv'
       }, mockEventEmitter, 10);
       await delay(30);
       expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(0);
