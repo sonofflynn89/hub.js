@@ -1,6 +1,6 @@
 import { RemoteServerError } from './remote-server-error';
 
-interface IDownloadRequestParameters {
+interface IExportRequestParameters {
   host: string;
   datasetId: string;
   spatialRefId?: number;
@@ -10,7 +10,7 @@ interface IDownloadRequestParameters {
   where?: string;
 }
 
-export function requestDatasetExport (params: IDownloadRequestParameters) {
+export function requestDatasetExport (params: IExportRequestParameters) {
   const {
     host,
     datasetId,
@@ -42,11 +42,13 @@ export function requestDatasetExport (params: IDownloadRequestParameters) {
       if (!ok) {
         throw new RemoteServerError(statusText, url, status);
       }
-      return resolve(resp.json());
-      })
-      .catch(error => {
-        return reject(error);
-      });
+      return resp.json();
+    }).then(json => {
+      return resolve(json);
+    })
+    .catch(error => {
+      return reject(error);
+    });
   });
 }
 

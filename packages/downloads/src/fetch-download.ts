@@ -1,6 +1,6 @@
 import { RemoteServerError } from './remote-server-error';
 
-interface IDownloadRequestParameters {
+interface IDownloadFetchParameters {
   host: string;
   datasetId: string;
   spatialRefId?: number;
@@ -22,7 +22,7 @@ interface IDownloadMetadata {
 }
 
 export function fetchDownload(
-  params: IDownloadRequestParameters
+  params: IDownloadFetchParameters
 ): Promise<IDownloadMetadata> {
   const {
     host,
