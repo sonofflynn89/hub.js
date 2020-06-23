@@ -74,7 +74,7 @@ describe("pollDownloadMetadata", () => {
         spatialRefId: 4326,
         format: 'csv'
       }, mockEventEmitter, 10);
-      await delay(0);
+      await delay(50);
       expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(1);
       const [topic, customEvent] = (mockEventEmitter.emit as any).calls.first().args;
       expect(topic).toEqual('test-idExportError');
@@ -137,7 +137,7 @@ describe("pollDownloadMetadata", () => {
         spatialRefId: 4326,
         format: 'csv'
       }, mockEventEmitter, 10);
-      await delay(0);
+      await delay(50);
       expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(1);
       const [topic, customEvent] = (mockEventEmitter.emit as any).calls.first().args;
       expect(topic).toEqual('test-idExportComplete');
@@ -200,7 +200,7 @@ describe("pollDownloadMetadata", () => {
         spatialRefId: 4326,
         format: 'csv'
       }, mockEventEmitter, 10);
-      await delay(30);
+      await delay(50);
       expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(0);
     } catch (err) {
       expect(err).toEqual(undefined);
