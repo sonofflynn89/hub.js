@@ -48,7 +48,7 @@ export function requestDownloadMetadata(
     geometry: geometry ? JSON.stringify(geometry) : undefined,
     where
   };
-  const url = requestBuilder({ host, route: `/api/v3/${datasetId}/downloads`, params: queryParams })
+  const url = requestBuilder({ host, route: `/api/v3/datasets/${datasetId}/downloads`, params: queryParams })
   return new Promise((resolve, reject) => {
     fetch(url).then(resp => {
       const { ok, status, statusText } = resp;
