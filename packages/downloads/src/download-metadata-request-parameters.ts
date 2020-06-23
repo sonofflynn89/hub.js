@@ -1,4 +1,4 @@
-export interface IDownloadRequestParameters {
+export interface IDownloadMetadataRequestParameters {
   host: string;
   datasetId: string;
   format: string;

@@ -1,13 +1,8 @@
 
 import * as fetchMock from 'fetch-mock';
-import { pollDownload } from "../src/poll-download";
-import { EventEmitter } from 'events';
+import { requestDownloadMetadata } from "../src/request-download-metadata";
 
-function delay (milliseconds: number) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
-}
-
-describe("pollDownload", () => {
+describe("requestDownloadMetadata", () => {
 
   afterEach(() => fetchMock.restore());
 
@@ -16,20 +11,103 @@ describe("pollDownload", () => {
       fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 502,
       });
-      const mockEventEmitter = new EventEmitter();
-      spyOn(mockEventEmitter, 'emit');
-      pollDownload({
+
+      await requestDownloadMetadata({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        downloadId: 'test-id',
         spatialRefId: 4326,
         format: 'csv'
-      }, mockEventEmitter, 10);
-      await delay(0);
-      expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(1);
-      expect((mockEventEmitter.emit as any).calls.first().args).toEqual([
-        'test-idExportError', { detail: { metadata: { status: 'error', error: new Error('Bad Gateway') } } }
-      ])
+      });
+    } catch (err) {
+      const { message, status, url } = err;
+      expect(message).toEqual('Bad Gateway');
+      expect(status).toEqual(502);
+      expect(url).toEqual('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv');
+    } finally {
+      done();
+    }
+  });
+
+  it('handle missing data property', async done => {
+    try {
+      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+        status: 200,
+        body: {}
+      });
+
+      const result = await requestDownloadMetadata({
+        host: 'http://hub.com',
+        datasetId: 'abcdef0123456789abcdef0123456789_0',
+        spatialRefId: 4326,
+        format: 'csv'
+      });
+
+      expect(result).toEqual(undefined);
+    } catch (err) {
+      expect(err.message).toEqual('Unexpected API response; no "data" property.');
+    } finally {
+      done();
+    }
+  });
+
+  it('handle data is not array', async done => {
+    try {
+      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+        status: 200,
+        body: { data: {} }
+      });
+
+      const result = await requestDownloadMetadata({
+        host: 'http://hub.com',
+        datasetId: 'abcdef0123456789abcdef0123456789_0',
+        spatialRefId: 4326,
+        format: 'csv'
+      });
+
+      expect(result).toEqual(undefined);
+    } catch (err) {
+      expect(err.message).toEqual('Unexpected API response; "data" is not an array.');
+    } finally {
+      done();
+    }
+  });
+
+  it('handle data array with more than one element', async done => {
+    try {
+      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?formats=csv', {
+        status: 200,
+        body: { data: [{}, {}] }
+      });
+
+      await requestDownloadMetadata({
+        host: 'http://hub.com',
+        datasetId: 'abcdef0123456789abcdef0123456789_0',
+        format: 'csv'
+      });
+    } catch (err) {
+      expect(err.message).toEqual('Unexpected API response; "data" contains more than one download.');
+    } finally {
+      done();
+    }
+  });
+
+  it('handle zero download results', async done => {
+    try {
+      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+        status: 200,
+        body: {
+          data: []
+        }
+      });
+
+      const result = await requestDownloadMetadata({
+        host: 'http://hub.com',
+        datasetId: 'abcdef0123456789abcdef0123456789_0',
+        spatialRefId: 4326,
+        format: 'csv'
+      });
+
+      expect(result).toEqual(undefined);
     } catch (err) {
       expect(err).toEqual(undefined);
     } finally {
@@ -37,7 +115,7 @@ describe("pollDownload", () => {
     }
   });
 
-  it('handle failed export', async done => {
+  it('handle downloaded result', async done => {
     try {
       fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
@@ -49,7 +127,11 @@ describe("pollDownload", () => {
               attributes: {
                 spatialRefId: '4326',
                 format: 'csv',
-                status: 'error_creating',
+                contentLength: 1391454,
+                lastModified: '2020-06-17T13:04:28.000Z',
+                contentLastModified: '2020-06-17T01:16:01.933Z',
+                cacheTime: 13121,
+                status: 'stale',
                 featureSet: 'full',
                 source: {
                   type: 'Feature Service',
@@ -66,88 +148,20 @@ describe("pollDownload", () => {
           ]
         }
       });
-      const mockEventEmitter = new EventEmitter();
-      spyOn(mockEventEmitter, 'emit');
-      pollDownload({
-        host: 'http://hub.com',
-        datasetId: 'abcdef0123456789abcdef0123456789_0',
-        downloadId: 'test-id',
-        spatialRefId: 4326,
-        format: 'csv'
-      }, mockEventEmitter, 10);
-      await delay(0);
-      expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(1);
-      const [topic, customEvent] = (mockEventEmitter.emit as any).calls.first().args;
-      expect(topic).toEqual('test-idExportError');
-      expect(customEvent.detail.metadata).toEqual({
-        downloadId: undefined,
-        contentLastModified: undefined,
-        lastEditDate: '2020-06-18T01:17:31.492Z',
-        lastModified: undefined,
-        status: 'error_creating',
-        downloadUrl: 'https://dev-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv',
-        contentLength: undefined,
-        cacheTime: undefined
-      });
-    } catch (err) {
-      expect(err).toEqual(undefined);
-    } finally {
-      done();
-    }
-  });
 
-  it('handle successful export', async done => {
-    try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
-        status: 200,
-        body: {
-          data: [
-            {
-              id: 'dd4580c810204019a7b8eb3e0b329dd6_0',
-              type: 'downloads',
-              attributes: {
-                spatialRefId: '4326',
-                format: 'csv',
-                contentLength: 1391454,
-                lastModified: '2020-06-17T13:04:28.000Z',
-                contentLastModified: '2020-06-17T01:16:01.933Z',
-                cacheTime: 13121,
-                status: 'ready',
-                featureSet: 'full',
-                source: {
-                  type: 'Feature Service',
-                  url: 'https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/RKI_COVID19/FeatureServer/0?f=json',
-                  supportsExtract: true,
-                  lastEditDate: '2020-06-18T01:15:31.492Z',
-                  spatialRefId: '4326'
-                }
-              },
-              links: {
-                content: 'https://dev-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv'
-              }
-            }
-          ]
-        }
-      });
-      const mockEventEmitter = new EventEmitter();
-      spyOn(mockEventEmitter, 'emit');
-      pollDownload({
+      const result = await requestDownloadMetadata({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        downloadId: 'test-id',
         spatialRefId: 4326,
         format: 'csv'
-      }, mockEventEmitter, 10);
-      await delay(0);
-      expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(1);
-      const [topic, customEvent] = (mockEventEmitter.emit as any).calls.first().args;
-      expect(topic).toEqual('test-idExportComplete');
-      expect(customEvent.detail.metadata).toEqual({
+      });
+
+      expect(result).toEqual({
         downloadId: undefined,
         contentLastModified: '2020-06-17T01:16:01.933Z',
-        lastEditDate: '2020-06-18T01:15:31.492Z',
+        lastEditDate: '2020-06-18T01:17:31.492Z',
         lastModified: '2020-06-17T13:04:28.000Z',
-        status: 'ready',
+        status: 'stale',
         downloadUrl: 'https://dev-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv',
         contentLength: 1391454,
         cacheTime: 13121
@@ -159,7 +173,7 @@ describe("pollDownload", () => {
     }
   });
 
-  it('handle multiple polls', async done => {
+  it('handle downloaded result with host including trailing slash', async done => {
     try {
       fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
@@ -175,13 +189,13 @@ describe("pollDownload", () => {
                 lastModified: '2020-06-17T13:04:28.000Z',
                 contentLastModified: '2020-06-17T01:16:01.933Z',
                 cacheTime: 13121,
-                status: 'updating',
+                status: 'stale',
                 featureSet: 'full',
                 source: {
                   type: 'Feature Service',
                   url: 'https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/RKI_COVID19/FeatureServer/0?f=json',
                   supportsExtract: true,
-                  lastEditDate: '2020-06-18T01:19:31.492Z',
+                  lastEditDate: '2020-06-18T01:17:31.492Z',
                   spatialRefId: '4326'
                 }
               },
@@ -192,21 +206,95 @@ describe("pollDownload", () => {
           ]
         }
       });
-      const mockEventEmitter = new EventEmitter();
-      spyOn(mockEventEmitter, 'emit');
-      pollDownload({
-        host: 'http://hub.com',
+
+      const result = await requestDownloadMetadata({
+        host: 'http://hub.com/',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        downloadId: 'test-id',
         spatialRefId: 4326,
         format: 'csv'
-      }, mockEventEmitter, 10);
-      await delay(30);
-      expect(mockEventEmitter.emit as any).toHaveBeenCalledTimes(0);
+      });
+
+      expect(result).toEqual({
+        downloadId: undefined,
+        contentLastModified: '2020-06-17T01:16:01.933Z',
+        lastEditDate: '2020-06-18T01:17:31.492Z',
+        lastModified: '2020-06-17T13:04:28.000Z',
+        status: 'stale',
+        downloadUrl: 'https://dev-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv',
+        contentLength: 1391454,
+        cacheTime: 13121
+      });
     } catch (err) {
       expect(err).toEqual(undefined);
     } finally {
       done();
     }
-  }, 16000);
+  });
+
+ it('handle downloaded result with geometry filter', async done => {
+    try {
+      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv&geometry=%7B%22xmin%22%3A0%2C%22xmax%22%3A10%2C%22ymin%22%3A0%2C%22ymax%22%3A10%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D', {
+        status: 200,
+        body: {
+          data: [
+            {
+              id: 'dd4580c810204019a7b8eb3e0b329dd6_0',
+              type: 'downloads',
+              attributes: {
+                spatialRefId: '4326',
+                format: 'csv',
+                contentLength: 1391454,
+                lastModified: '2020-06-17T13:04:28.000Z',
+                contentLastModified: '2020-06-17T01:16:01.933Z',
+                cacheTime: 13121,
+                status: 'stale',
+                featureSet: 'full',
+                source: {
+                  type: 'Feature Service',
+                  url: 'https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/RKI_COVID19/FeatureServer/0?f=json',
+                  supportsExtract: true,
+                  lastEditDate: '2020-06-18T01:17:31.492Z',
+                  spatialRefId: '4326'
+                }
+              },
+              links: {
+                content: 'https://dev-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv'
+              }
+            }
+          ]
+        }
+      });
+
+      const result = await requestDownloadMetadata({
+        host: 'http://hub.com/',
+        datasetId: 'abcdef0123456789abcdef0123456789_0',
+        spatialRefId: 4326,
+        format: 'csv',
+        geometry: {
+          xmin: 0,
+          xmax: 10,
+          ymin: 0,
+          ymax: 10,
+          spatialReference: {
+            wkid: 4326
+          }
+        }
+      });
+
+      expect(result).toEqual({
+        downloadId: undefined,
+        contentLastModified: '2020-06-17T01:16:01.933Z',
+        lastEditDate: '2020-06-18T01:17:31.492Z',
+        lastModified: '2020-06-17T13:04:28.000Z',
+        status: 'stale',
+        downloadUrl: 'https://dev-hub-indexer.s3.amazonaws.com/files/dd4580c810204019a7b8eb3e0b329dd6/0/full/4326/dd4580c810204019a7b8eb3e0b329dd6_0_full_4326.csv',
+        contentLength: 1391454,
+        cacheTime: 13121
+      });
+    } catch (err) {
+      expect(err).toEqual(undefined);
+    } finally {
+      done();
+    }
+  });
 });

@@ -1,14 +1,5 @@
 import { RemoteServerError } from './remote-server-error';
-
-interface IExportRequestParameters {
-  host: string;
-  datasetId: string;
-  spatialRefId?: number;
-  spatialRefWkt?: string;
-  format?: string;
-  geometry?: string;
-  where?: string;
-}
+import { IDatasetExportRequestParameters } from './dataset-export-request-parameters';
 
 /**
  * ```js
@@ -19,7 +10,6 @@ interface IExportRequestParameters {
  *   datasetId: 'abcdef0123456789abcdef0123456789_0',
  *   format: 'csv'
  * };
- * 
  * fetchDownload(params)
  *   .then(response => {
  *     // {
@@ -30,7 +20,7 @@ interface IExportRequestParameters {
  * Request an export of a dataset to a particular file format.
  * @param params - parameters defining a dataset export job
  */
-export function requestDatasetExport (params: IExportRequestParameters) {
+export function requestDatasetExport (params: IDatasetExportRequestParameters) {
   const {
     host,
     datasetId,

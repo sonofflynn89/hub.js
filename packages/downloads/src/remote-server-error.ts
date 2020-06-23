@@ -1,3 +1,6 @@
+/**
+ * @ignore
+ */
 export class RemoteServerError extends Error {
   status: number;
   url: string;

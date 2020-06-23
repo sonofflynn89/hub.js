@@ -1,4 +1,4 @@
-import { IDownloadRequestParameters } from "./download-request-parameters";
+import { IDownloadMetadataRequestParameters } from "./download-metadata-request-parameters";
 import { RemoteServerError } from './remote-server-error';
 
 interface IDownloadMetadata {
@@ -14,15 +14,13 @@ interface IDownloadMetadata {
 
 /**
  * ```js
- * import { fetchDownload } from "@esri/hub-downloads";
- * 
+ * import { requestDownloadMetadata } from "@esri/hub-downloads";
  * const params = {
  *   host: 'https://hub.arcgis.com,
  *   datasetId: 'abcdef0123456789abcdef0123456789_0',
  *   format: 'csv'
  * };
- * 
- * fetchDownload(params)
+ * requestDownloadMetadata(params)
  *   .then(response => {
  *     // {
  *     //   downloadId: 'abcdef0123456789abcdef0123456789_0::csv',
@@ -40,8 +38,8 @@ interface IDownloadMetadata {
  * @param params - parameters that define the download
  * @returns A Promise that will resolve with download metadata.
  */
-export function fetchDownload(
-  params: IDownloadRequestParameters
+export function requestDownloadMetadata(
+  params: IDownloadMetadataRequestParameters
 ): Promise<IDownloadMetadata> {
   const {
     host,
