@@ -12,7 +12,7 @@ describe("pollDownloadMetadata", () => {
 
   it('handle remote server 502 error', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 502,
       });
       const mockEventEmitter = new EventEmitter();
@@ -38,7 +38,7 @@ describe("pollDownloadMetadata", () => {
 
   it('handle failed export', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
         body: {
           data: [
@@ -97,7 +97,7 @@ describe("pollDownloadMetadata", () => {
 
   it('handle successful export', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
         body: {
           data: [
@@ -160,7 +160,7 @@ describe("pollDownloadMetadata", () => {
 
   it('handle multiple polls', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
         body: {
           data: [

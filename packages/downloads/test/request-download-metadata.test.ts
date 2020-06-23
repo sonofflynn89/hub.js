@@ -8,7 +8,7 @@ describe("requestDownloadMetadata", () => {
 
   it('handle remote server 502 error', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 502,
       });
 
@@ -22,7 +22,7 @@ describe("requestDownloadMetadata", () => {
       const { message, status, url } = err;
       expect(message).toEqual('Bad Gateway');
       expect(status).toEqual(502);
-      expect(url).toEqual('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv');
+      expect(url).toEqual('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv');
     } finally {
       done();
     }
@@ -30,7 +30,7 @@ describe("requestDownloadMetadata", () => {
 
   it('handle missing data property', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
         body: {}
       });
@@ -52,7 +52,7 @@ describe("requestDownloadMetadata", () => {
 
   it('handle data is not array', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
         body: { data: {} }
       });
@@ -74,7 +74,7 @@ describe("requestDownloadMetadata", () => {
 
   it('handle data array with more than one element', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?formats=csv', {
         status: 200,
         body: { data: [{}, {}] }
       });
@@ -93,7 +93,7 @@ describe("requestDownloadMetadata", () => {
 
   it('handle zero download results', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
         body: {
           data: []
@@ -117,7 +117,7 @@ describe("requestDownloadMetadata", () => {
 
   it('handle downloaded result', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
         body: {
           data: [
@@ -175,7 +175,7 @@ describe("requestDownloadMetadata", () => {
 
   it('handle downloaded result with host including trailing slash', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv', {
         status: 200,
         body: {
           data: [
@@ -233,7 +233,7 @@ describe("requestDownloadMetadata", () => {
 
  it('handle downloaded result with geometry filter', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv&geometry=%22%7B%5C%22xmin%5C%22%3A0%2C%5C%22xmax%5C%22%3A10%2C%5C%22ymin%5C%22%3A0%2C%5C%22ymax%5C%22%3A10%2C%5C%22spatialReference%5C%22%3A%7B%5C%22wkid%5C%22%3A4326%7D%7D%22', {
+      fetchMock.mock('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv&geometry=%22%7B%5C%22xmin%5C%22%3A0%2C%5C%22xmax%5C%22%3A10%2C%5C%22ymin%5C%22%3A0%2C%5C%22ymax%5C%22%3A10%2C%5C%22spatialReference%5C%22%3A%7B%5C%22wkid%5C%22%3A4326%7D%7D%22', {
         status: 200,
         body: {
           data: [

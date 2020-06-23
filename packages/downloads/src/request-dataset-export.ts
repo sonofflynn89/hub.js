@@ -39,7 +39,7 @@ export function requestDatasetExport (params: IDatasetExportRequestParameters) {
     where
   };
 
-  const url = requestBuilder(host, `/api/v3/${datasetId}/downloads`)
+  const url = requestBuilder(host, `/api/v3/datasets/${datasetId}/downloads`)
   return new Promise((resolve, reject) => {
     fetch(url, {
       method: 'POST',

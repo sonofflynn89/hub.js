@@ -7,7 +7,7 @@ describe("requestDatasetExport", () => {
 
   it('handle remote server 502 error', async done => {
     try {
-      fetchMock.post('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads', {
+      fetchMock.post('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads', {
         status: 502
       }, {
         body: {
@@ -26,7 +26,7 @@ describe("requestDatasetExport", () => {
       const { message, status, url } = err;
       expect(message).toEqual('Bad Gateway');
       expect(status).toEqual(502);
-      expect(url).toEqual('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads');
+      expect(url).toEqual('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads');
     } finally {
       done();
     }
@@ -34,7 +34,7 @@ describe("requestDatasetExport", () => {
 
   it('handle remote server 400 error', async done => {
     try {
-      fetchMock.post('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads', {
+      fetchMock.post('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads', {
         status: 400
       }, {
         body: {
@@ -53,7 +53,7 @@ describe("requestDatasetExport", () => {
       const { message, status, url } = err;
       expect(message).toEqual('Bad Request');
       expect(status).toEqual(400);
-      expect(url).toEqual('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads');
+      expect(url).toEqual('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads');
     } finally {
       done();
     }
@@ -61,7 +61,7 @@ describe("requestDatasetExport", () => {
 
   it('success', async done => {
     try {
-      fetchMock.post('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads', {
+      fetchMock.post('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads', {
         status: 200,
         body: {
           downloadId: '123'
@@ -84,7 +84,7 @@ describe("requestDatasetExport", () => {
       const { message, status, url } = err;
       expect(message).toEqual('Bad Request');
       expect(status).toEqual(400);
-      expect(url).toEqual('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads');
+      expect(url).toEqual('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads');
     } finally {
       done();
     }
@@ -92,7 +92,7 @@ describe("requestDatasetExport", () => {
 
   it('success with a host that has trailing slash', async done => {
     try {
-      fetchMock.post('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads', {
+      fetchMock.post('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads', {
         status: 200,
         body: {
           downloadId: '123'
@@ -115,7 +115,7 @@ describe("requestDatasetExport", () => {
       const { message, status, url } = err;
       expect(message).toEqual('Bad Request');
       expect(status).toEqual(400);
-      expect(url).toEqual('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads');
+      expect(url).toEqual('http://hub.com/api/v3/datasets/abcdef0123456789abcdef0123456789_0/downloads');
     } finally {
       done();
     }
