@@ -1,7 +1,7 @@
 export interface IDatasetExportRequestParameters {
   host: string;
   datasetId: string;
-  spatialRefId?: number;
+  spatialRefId?: string;
   spatialRefWkt?: string;
   format?: string;
   geometry?: string;
