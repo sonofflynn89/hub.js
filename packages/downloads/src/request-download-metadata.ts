@@ -1,16 +1,6 @@
 import { IDownloadMetadataRequestParameters } from "./download-metadata-request-parameters";
+import { IDownloadMetadata } from "./download-metadata";
 import { RemoteServerError } from './remote-server-error';
-
-interface IDownloadMetadata {
-  downloadId: string,
-  lastEditDate:string,
-  contentLastModified: string,
-  lastModified: string,
-  status: string,
-  downloadUrl: string,
-  contentLength: number,
-  cacheTime: number
-}
 
 /**
  * ```js

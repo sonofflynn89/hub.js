@@ -3,6 +3,7 @@
 
 export * from "./dataset-export-request-parameters";
 export * from "./download-metadata-request-parameters";
+export * from "./download-metadata";
 export * from "./request-download-metadata";
 export * from "./poll-download-metadata"
 export * from "./request-dataset-export";

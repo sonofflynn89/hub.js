@@ -2,8 +2,8 @@ export interface IDownloadMetadataRequestParameters {
   host: string;
   datasetId: string;
   format: string;
-  spatialRefId?: number;
+  spatialRefId?: string;
   spatialRefWkt?: string;
-  geometry?: object;
+  geometry?: string;
   where?: string;
 }

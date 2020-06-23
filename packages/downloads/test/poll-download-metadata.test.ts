@@ -1,6 +1,6 @@
 import * as fetchMock from 'fetch-mock';
 import { pollDownloadMetadata } from "../src/poll-download-metadata";
-import { EventEmitter } from 'events';
+import * as EventEmitter from 'eventemitter3';
 
 function delay (milliseconds: number) {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -21,7 +21,7 @@ describe("pollDownloadMetadata", () => {
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
         downloadId: 'test-id',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       }, mockEventEmitter, 10);
       await delay(0);
@@ -71,7 +71,7 @@ describe("pollDownloadMetadata", () => {
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
         downloadId: 'test-id',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       }, mockEventEmitter, 10);
       await delay(50);
@@ -134,7 +134,7 @@ describe("pollDownloadMetadata", () => {
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
         downloadId: 'test-id',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       }, mockEventEmitter, 10);
       await delay(50);
@@ -197,7 +197,7 @@ describe("pollDownloadMetadata", () => {
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
         downloadId: 'test-id',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       }, mockEventEmitter, 10);
       await delay(50);
