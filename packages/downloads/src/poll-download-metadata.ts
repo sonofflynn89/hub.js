@@ -1,8 +1,6 @@
 import { IDownloadMetadataPollParameters } from "./download-metadata-poll-parameters";
 import { requestDownloadMetadata } from "./request-download-metadata";
-import { EventEmitter } from 'events';
-
-
+import * as EventEmitter from 'eventemitter3';
 
 /**
  * ```js
