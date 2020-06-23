@@ -11,6 +11,5 @@ export class RemoteServerError extends Error {
     super(message);
     this.status = status;
     this.url = url;
-    Error.captureStackTrace(this, RemoteServerError);
   }
 }
