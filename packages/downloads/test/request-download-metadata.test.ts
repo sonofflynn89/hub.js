@@ -15,7 +15,7 @@ describe("requestDownloadMetadata", () => {
       await requestDownloadMetadata({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       });
     } catch (err) {
@@ -38,7 +38,7 @@ describe("requestDownloadMetadata", () => {
       const result = await requestDownloadMetadata({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       });
 
@@ -60,7 +60,7 @@ describe("requestDownloadMetadata", () => {
       const result = await requestDownloadMetadata({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       });
 
@@ -103,7 +103,7 @@ describe("requestDownloadMetadata", () => {
       const result = await requestDownloadMetadata({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       });
 
@@ -152,7 +152,7 @@ describe("requestDownloadMetadata", () => {
       const result = await requestDownloadMetadata({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       });
 
@@ -210,7 +210,7 @@ describe("requestDownloadMetadata", () => {
       const result = await requestDownloadMetadata({
         host: 'http://hub.com/',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       });
 
@@ -233,7 +233,7 @@ describe("requestDownloadMetadata", () => {
 
  it('handle downloaded result with geometry filter', async done => {
     try {
-      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv&geometry=%7B%22xmin%22%3A0%2C%22xmax%22%3A10%2C%22ymin%22%3A0%2C%22ymax%22%3A10%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D', {
+      fetchMock.mock('http://hub.com/api/v3/abcdef0123456789abcdef0123456789_0/downloads?spatialRefId=4326&formats=csv&geometry=%22%7B%5C%22xmin%5C%22%3A0%2C%5C%22xmax%5C%22%3A10%2C%5C%22ymin%5C%22%3A0%2C%5C%22ymax%5C%22%3A10%2C%5C%22spatialReference%5C%22%3A%7B%5C%22wkid%5C%22%3A4326%7D%7D%22', {
         status: 200,
         body: {
           data: [
@@ -268,9 +268,9 @@ describe("requestDownloadMetadata", () => {
       const result = await requestDownloadMetadata({
         host: 'http://hub.com/',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv',
-        geometry: {
+        geometry: JSON.stringify({
           xmin: 0,
           xmax: 10,
           ymin: 0,
@@ -278,7 +278,7 @@ describe("requestDownloadMetadata", () => {
           spatialReference: {
             wkid: 4326
           }
-        }
+        })
       });
 
       expect(result).toEqual({
