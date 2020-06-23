@@ -11,7 +11,7 @@ describe("requestDatasetExport", () => {
         status: 502
       }, {
         body: {
-          spatialRefId: 4326,
+          spatialRefId: '4326',
           format: 'csv'
         }
       });
@@ -19,7 +19,7 @@ describe("requestDatasetExport", () => {
       expect(await requestDatasetExport({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       })).toThrow()
     } catch (err) {
@@ -38,7 +38,7 @@ describe("requestDatasetExport", () => {
         status: 400
       }, {
         body: {
-          spatialRefId: 4326,
+          spatialRefId: '4326',
           format: 'tsv'
         }
       });
@@ -46,7 +46,7 @@ describe("requestDatasetExport", () => {
       expect(await requestDatasetExport({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'tsv'
       })).toThrow()
     } catch (err) {
@@ -68,7 +68,7 @@ describe("requestDatasetExport", () => {
         }
       }, {
         body: {
-          spatialRefId: 4326,
+          spatialRefId: '4326',
           format: 'csv'
         }
       });
@@ -76,7 +76,7 @@ describe("requestDatasetExport", () => {
       const json:any = await requestDatasetExport({
         host: 'http://hub.com',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       });
       expect(json.downloadId).toEqual('123')
@@ -99,7 +99,7 @@ describe("requestDatasetExport", () => {
         }
       }, {
         body: {
-          spatialRefId: 4326,
+          spatialRefId: '4326',
           format: 'csv'
         }
       });
@@ -107,7 +107,7 @@ describe("requestDatasetExport", () => {
       const json:any = await requestDatasetExport({
         host: 'http://hub.com/',
         datasetId: 'abcdef0123456789abcdef0123456789_0',
-        spatialRefId: 4326,
+        spatialRefId: '4326',
         format: 'csv'
       });
       expect(json.downloadId).toEqual('123')
